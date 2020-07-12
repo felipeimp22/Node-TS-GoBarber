@@ -1,6 +1,7 @@
 // node 12.18.1
 import express from 'express';
 import routes from './routes/index';
+import './database';
 
 const app = express();
 app.use(express.json()); // Use to application understand JSON
