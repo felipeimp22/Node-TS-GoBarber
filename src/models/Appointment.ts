@@ -9,7 +9,7 @@ class Appointment {
   @Column() // se nao passar nada no () o tipo é varchar
   provider: string;
 
-  @Column('timestamp with local time zone')
+  @Column('time with time zone')
   date: Date;
 
   // Omit é um Helper que passa como primeiro parametro a tipagem que voce vai usar,

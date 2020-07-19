@@ -1,8 +1,10 @@
-import { Router, response } from 'express';
+import { Router } from 'express';
 //--------------------------------------------------------------------------
 // coment 1
 // import { uuid } from 'uuidv4';
 //--------------------------------------------------------------------------
+
+import { getCustomRepository } from 'typeorm';
 
 import { startOfHour, parseISO, isEqual } from 'date-fns';
 // import Appointment from '../models/Appointment';
@@ -13,29 +15,33 @@ import AppointmentsRepository from '../repositories/AppointmentsRepository';
 
 const appointmentsRouter = Router();
 
-const appointmentsRepository = new AppointmentsRepository();
+// const appointmentsRepository = new AppointmentsRepository();
 
-appointmentsRouter.get('/', (req, res) => {
-  const appointments = appointmentsRepository.all();
+appointmentsRouter.get('/', async (req, res) => {
+  const appointmentsRepository = getCustomRepository(AppointmentsRepository);
+
+  const appointments = await appointmentsRepository.find();
   return res.json(appointments);
 });
 
-appointmentsRouter.post('/', (req, res) => {
+appointmentsRouter.post('/', async (req, res) => {
   try {
     const { provider, date } = req.body;
 
     const parsedDate = parseISO(date);
 
-    const createAppointment = new CreateAppointmentService(
-      appointmentsRepository,
-    );
-    const appointment = createAppointment.execute({
+    const createAppointment = new CreateAppointmentService();
+
+    // const createAppointment = new CreateAppointmentService(
+    //   appointmentsRepository,
+    // );
+    const appointment = await createAppointment.execute({
       date: parsedDate,
       provider,
     });
     return res.json(appointment);
   } catch (err) {
-    return response.status(400).json({ error: err.message });
+    return res.status(400).json({ error: err.message });
   }
 });
 

@@ -1,4 +1,6 @@
 import { startOfHour } from 'date-fns';
+import { getCustomRepository } from 'typeorm';
+// import { uuid } from 'uuidv4';
 import Appointment from '../models/Appointment';
 import AppointmentsRepository from '../repositories/AppointmentsRepository';
 
@@ -12,28 +14,36 @@ interface RequestDTO {
  */
 
 class CreateAppointmentService {
-  private appointmentsRepository: AppointmentsRepository;
+  // private appointmentsRepository: AppointmentsRepository;
 
-  // quando voce quiser que o parametro de uma classe seja a instancia de outra classe sua tipagem deve ser o seu Repositorie
-  constructor(appointmentRepository: AppointmentsRepository) {
-    this.appointmentsRepository = appointmentRepository;
-  }
+  // // quando voce quiser que o parametro de uma classe seja a instancia de outra classe sua tipagem deve ser o seu Repositorie
+  // constructor(appointmentRepository: AppointmentsRepository) {
+  //   this.appointmentsRepository = appointmentRepository;
+  // }
 
-  public execute({ date, provider }: RequestDTO): Appointment {
+  public async execute({ date, provider }: RequestDTO): Promise<Appointment> {
+    const appointmentsRepository = getCustomRepository(AppointmentsRepository);
+
     const appointmentDate = startOfHour(date);
 
-    const findAppointmentInSameDate = this.appointmentsRepository.findByDate(
+    const findAppointmentInSameDate = await appointmentsRepository.findByDate(
       appointmentDate,
     );
+
+    // const findAppointmentInSameDate = this.appointmentsRepository.findByDate(
+    //   appointmentDate,
+    // );
 
     if (findAppointmentInSameDate) {
       throw new Error('this date is already booked');
     }
 
-    const appointment = this.appointmentsRepository.create({
+    const appointment = appointmentsRepository.create({
+      // id: uuid(),
       provider,
       date: appointmentDate,
     });
+    await appointmentsRepository.save(appointment);
     return appointment;
   }
 }
