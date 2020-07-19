@@ -9,18 +9,7 @@ interface RequestDTO {
   provider: string;
 }
 
-/**
- * Dependency inversion
- */
-
 class CreateAppointmentService {
-  // private appointmentsRepository: AppointmentsRepository;
-
-  // // quando voce quiser que o parametro de uma classe seja a instancia de outra classe sua tipagem deve ser o seu Repositorie
-  // constructor(appointmentRepository: AppointmentsRepository) {
-  //   this.appointmentsRepository = appointmentRepository;
-  // }
-
   public async execute({ date, provider }: RequestDTO): Promise<Appointment> {
     const appointmentsRepository = getCustomRepository(AppointmentsRepository);
 
