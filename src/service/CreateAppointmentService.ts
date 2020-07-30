@@ -19,10 +19,6 @@ class CreateAppointmentService {
       appointmentDate,
     );
 
-    // const findAppointmentInSameDate = this.appointmentsRepository.findByDate(
-    //   appointmentDate,
-    // );
-
     if (findAppointmentInSameDate) {
       throw new Error('this date is already booked');
     }
