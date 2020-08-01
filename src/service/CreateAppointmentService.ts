@@ -15,6 +15,10 @@ class CreateAppointmentService {
 
     const appointmentDate = startOfHour(date);
 
+    // promises sao valores truth se passados para boleanos vao dar como verdadeiro.
+    // exemplo, se no const findappointmentInSameDate nao colocar o await
+    // ele vai cair dentro do if(findAppointmentInSameDate), mesmo sendo retornado
+    // Promose pending, pois é um valor truth
     const findAppointmentInSameDate = await appointmentsRepository.findByDate(
       appointmentDate,
     );
