@@ -4,6 +4,7 @@
   "port": 5432,
   "username": "postgres",
   "database": "gobarber",
+  "password": "postgres",
   "entities": [
     "./src/models/*.ts"
   ],

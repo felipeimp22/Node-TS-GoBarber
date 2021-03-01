@@ -1,0 +1,3 @@
+yarn typeorm migration:create -n nameMigration
+yarn typeorm migration:run
+

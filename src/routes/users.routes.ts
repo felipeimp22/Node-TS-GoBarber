@@ -1,11 +1,14 @@
 import { Router } from 'express';
 import multer from 'multer';
 import uploadConfig from '../config/upload';
-
 import ensureAuthenticated from '../middlewares/ensureAuthenticated';
-
 import CreateUserService from '../service/CreateUserService';
 
+interface User {
+  name: string;
+  password?: string;
+  email?: string;
+}
 const upload = multer(uploadConfig);
 const usersRouter = Router();
 /**
@@ -21,7 +24,7 @@ usersRouter.post('/', async (req, res) => {
     const { name, email, password } = req.body;
 
     const createUser = new CreateUserService();
-    const user = await createUser.execute({ email, name, password });
+    const user: User = await createUser.execute({ email, name, password });
 
     // Deletando retorno do user.password para quando exibir o user, ele nao mostrar o password
     delete user.password;
@@ -32,9 +35,7 @@ usersRouter.post('/', async (req, res) => {
   }
 });
 
-usersRouter.patch(
-  '/avatar',
-  ensureAuthenticated,
+usersRouter.patch('/avatar', ensureAuthenticated,
   upload.single('avatar'), // dentro do single, é o nome do campo que a rota vai receber a imagem, nesse caso vamos passar por body um campo chamado 'avatar'.
   async (req, res) => {
     console.log(req.file);
