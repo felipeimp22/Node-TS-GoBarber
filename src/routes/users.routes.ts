@@ -1,14 +1,16 @@
-import { Router } from 'express';
+import { response, Router } from 'express';
 import multer from 'multer';
 import uploadConfig from '../config/upload';
 import ensureAuthenticated from '../middlewares/ensureAuthenticated';
 import CreateUserService from '../service/CreateUserService';
-
+import UpdateUserAvatarService from '../service/UpdateUserAvatarService'
+import User from '../models/User';
 interface User {
   name: string;
   password?: string;
   email?: string;
 }
+
 const upload = multer(uploadConfig);
 const usersRouter = Router();
 /**
@@ -38,8 +40,20 @@ usersRouter.post('/', async (req, res) => {
 usersRouter.patch('/avatar', ensureAuthenticated,
   upload.single('avatar'), // dentro do single, é o nome do campo que a rota vai receber a imagem, nesse caso vamos passar por body um campo chamado 'avatar'.
   async (req, res) => {
-    console.log(req.file);
-    return res.json('ok');
+    try {
+      const updateUserAvatar = new UpdateUserAvatarService();
+
+      const user: User | undefined = await updateUserAvatar.execute({
+        user_id: req.user.id,
+        avatarFileName: req.file.filename
+      })
+      delete user?.password
+      return res.json(user)
+
+    } catch (err) {
+
+      return res.status(400).json({ error: err.message });
+    }
   },
 );
 
